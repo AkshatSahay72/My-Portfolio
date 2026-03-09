@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Akshat_Sahay.ipynb</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+    <div class="notebook-wrapper">
+        <!-- Top Notebook Bar -->
+        <header class="notebook-header">
+            <div class="header-left">
+                <div class="kernel-circle"></div>
+                <span class="file-name">Akshat_Sahay.ipynb</span>
+            </div>
+            <!-- Fix duplicate Home in the navbar -->
+            <nav class="header-center">
+                <button class="toolbar-item" data-target="home">Home</button>
+                <button class="toolbar-item" data-target="projects">Projects</button>
+                <button class="toolbar-item" data-target="certificates">Certificates</button>
+                <button class="toolbar-item" data-target="git">Git</button>
+                <button class="toolbar-item" data-target="education">Education</button>
+                <button class="toolbar-item" data-target="contact">Contact</button>
+            </nav>
+            <div class="header-right">
+                <span class="kernel-status-label">Kernel</span>
+                <span class="kernel-status-indicator kernel-idle"></span>
+                <span class="kernel-status-text">Python 3 | Idle</span>
+            </div>
+        </header>
+
+        <!-- Loading Screen -->
+        <section class="boot-screen" id="boot-screen">
+                <div class="boot-terminal">
+                    <div class="boot-line" data-text="Initializing Python kernel..."></div>
+                    <div class="boot-line" data-text="Loading modules..."></div>
+                    <div class="boot-line" data-text="Fetching GitHub repositories..."></div>
+                    <div class="boot-line" data-text="Loading local certificates..."></div>
+                    <div class="boot-line" data-text="Executing notebook cells..."></div>
+                </div>
+        </section>
+
+        <!-- Main Notebook Content -->
+        <main class="notebook-main hidden" id="notebook-main">
+            <!-- Home -->
+            <section id="home" class="cell-section">
+                <div class="cell-row">
+                    <div class="prompt">In&nbsp;[1]:</div>
+                    <div class="code-cell"><span class="code-fn">whoami</span><span class="paren">()</span></div>
+                </div>
+                <div class="cell-row output-row">
+                    <div class="prompt out-prompt">Out[1]:</div>
+                    <div class="output-cell">
+                        <div class="home-layout">
+                            <div class="home-left">
+                                <img
+                                    src="{{ url_for('static', filename=profile_image) }}"
+                                    alt="Profile Picture of Akshat Sahay"
+                                    class="profile-picture"
+                                />
+                            </div>
+                            <div class="home-right">
+                                <h1 class="name">Akshat Sahay</h1>
+                                <p class="role">AI / ML engineer in training</p>
+                                <p class="education">
+                                    B.Tech in Computer Science · Lovely Professional University · CGPA 8.48
+                                </p>
+                                <p class="summary-text">
+                                    AI/ML engineer in training with experience in machine learning projects, data analysis,
+                                    and building ML applications using Python. Passionate about turning data into
+                                    actionable insights and deploying practical ML systems.
+                                </p>
+
+                                <div class="contact-links">
+                                    <a href="mailto:akshatsahay19@gmail.com">Email</a>
+                                    <a href="https://github.com/{{ github_username }}" target="_blank" rel="noreferrer">GitHub</a>
+                                    <a href="https://www.linkedin.com/in/akshatsahay72/" target="_blank" rel="noreferrer">LinkedIn</a>
+                                    <a href="#certificates">Certificates</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section id="summary" class="cell-section">
+                <div class="cell-row">
+                    <div class="prompt">In&nbsp;[2]:</div>
+                    <div class="code-cell">
+                        <span class="code-fn">summary</span><span class="paren">()</span>
+                    </div>
+                </div>
+                <div class="cell-row output-row">
+                    <div class="prompt out-prompt">Out[2]:</div>
+                    <div class="output-cell">
+                        <p>
+                            AI/ML engineer in training with experience in machine learning projects, data analysis, and
+                            building ML applications using Python. Currently pursuing B.Tech in Computer Science at Lovely
+                            Professional University with a CGPA of 8.48.
+                        </p>
+                        <p>
+                            Experienced in machine learning, data preprocessing, exploratory data analysis, model
+                            training, and building end-to-end ML applications using Flask and Streamlit.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skills -->
+            <section id="skills" class="cell-section">
+                <div class="cell-row">
+                    <div class="prompt">In&nbsp;[3]:</div>
+                    <div class="code-cell">
+                        <span class="code-fn">skills</span><span class="paren">()</span>
+                    </div>
+                </div>
+                <div class="cell-row output-row">
+                    <div class="prompt out-prompt">Out[3]:</div>
+                    <div class="output-cell">
+                        <div class="skills-grid">
+                            <div class="skills-group">
+                                <div class="skills-group-title">Programming</div>
+                                <ul>
+                                    <li>Python</li>
+                                    <li>C++</li>
+                                    <li>Java</li>
+                                </ul>
+                            </div>
+                            <div class="skills-group">
+                                <div class="skills-group-title">Machine Learning &amp; Data</div>
+                                <ul>
+                                    <li>Data Cleaning</li>
+                                    <li>Exploratory Data Analysis</li>
+                                    <li>Basic Statistics</li>
+                                    <li>Supervised Learning</li>
+                                </ul>
+                            </div>
+                            <div class="skills-group">
+                                <div class="skills-group-title">Tools</div>
+                                <ul>
+                                    <li>Git, GitHub</li>
+                                    <li>MySQL</li>
+                                    <li>Jupyter Notebook</li>
+                                    <li>Streamlit</li>
+                                    <li>Power BI, Excel</li>
+                                    <li>Docker (Basic)</li>
+                                </ul>
+                            </div>
+                            <div class="skills-group">
+                                <div class="skills-group-title">Computer Science</div>
+                                <ul>
+                                    <li>Data Structures &amp; Algorithms</li>
+                                    <li>Object Oriented Programming</li>
+                                    <li>DBMS Basics</li>
+                                </ul>
+                            </div>
+                            <div class="skills-group">
+                                <div class="skills-group-title">Soft Skills</div>
+                                <ul>
+                                    <li>Problem Solving</li>
+                                    <li>Analytical Thinking</li>
+                                    <li>Communication</li>
+                                    <li>Team Collaboration</li>
+                                    <li>Adaptability</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects -->
+            <section id="projects" class="cell-section">
+                <div class="cell-row">
+                    <div class="prompt">In&nbsp;[4]:</div>
+                    <div class="code-cell">
+                        <span class="code-fn">load_projects</span><span class="paren">(</span><span class="str">"{{ github_username }}"</span><span class="paren">)</span>
+                    </div>
+                </div>
+                <div class="cell-row output-row">
+                    <div class="prompt out-prompt">Out[4]:</div>
+                    <div class="output-cell" id="projects-output">
+                        <div class="loading-inline"># fetching repositories...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Certificates -->
+            <section id="certificates" class="cell-section">
+                <div class="cell-row">
+                    <div class="prompt">In&nbsp;[5]:</div>
+                    <div class="code-cell">
+                        <span class="code-fn">verify_certificate</span><span class="paren">(</span><span class="str">"*"</span><span class="paren">)</span>
+                    </div>
+                </div>
+                <div class="cell-row output-row">
+                    <div class="prompt out-prompt">Out[5]:</div>
+                    <div class="output-cell">
+                        {% if certificates %}
+                        <div class="cert-grid">
+                            {% for cert in certificates %}
+                            <div class="cert-card">
+                                {% set lower_path = cert.path|lower %}
+                                {% if lower_path.endswith(('.png', '.jpg', '.jpeg', '.webp', '.svg')) %}
+                                <img src="{{ url_for('static', filename=cert.path) }}" alt="{{ cert.name }}">
+                                {% else %}
+                                <img src="{{ url_for('static', filename='images/certificate_icon.png') }}" alt="{{ cert.name }}">
+                                {% endif %}
+                                <h4>{{ cert.name }}</h4>
+                                <a href="{{ url_for('static', filename=cert.path) }}" target="_blank">View Certificate</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="loading-inline"># add certificate files to static/certificates/ to display them here</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Git -->
+            <section id="git" class="cell-section">
+                <div class="cell-row">
+                    <div class="prompt">In&nbsp;[6]:</div>
+                    <div class="code-cell">
+                        <span class="code-fn">git_status</span><span class="paren">(</span><span class="str">"{{ github_username }}"</span><span class="paren">)</span>
+                    </div>
+                </div>
+                <div class="cell-row output-row">
+                    <div class="prompt out-prompt">Out[6]:</div>
+                    <div class="output-cell" id="git-output">
+                        <div class="loading-inline"># querying GitHub API...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Education -->
+            <section id="education" class="cell-section">
+                <div class="cell-row">
+                    <div class="prompt">In&nbsp;[7]:</div>
+                    <div class="code-cell">
+                        <span class="code-fn">education</span><span class="paren">()</span>
+                    </div>
+                </div>
+                <div class="cell-row output-row">
+                    <div class="prompt out-prompt">Out[7]:</div>
+                    <div class="output-cell">
+                        <div class="education-section">
+                            <p><strong>Bachelor of Technology (B.Tech) – Computer Science and Engineering</strong></p>
+                            <p>Lovely Professional University</p>
+                            <p>CGPA: 8.48</p>
+                            <p>2023 – Present</p>
+                            <br>
+                            <p><strong>12th Grade</strong></p>
+                            <p>Jay Ambe International School</p>
+                            <p>Percentage: 72%</p>
+                            <br>
+                            <p><strong>10th Grade</strong></p>
+                            <p>Chandresh Lodha Memorial School</p>
+                            <p>Percentage: 78%</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact -->
+            <section id="contact" class="cell-section">
+                <div class="cell-row">
+                    <div class="prompt">In&nbsp;[8]:</div>
+                    <div class="code-cell">
+                        <span class="code-fn">contact</span><span class="paren">()</span>
+                    </div>
+                </div>
+                <div class="cell-row output-row">
+                    <div class="prompt out-prompt">Out[8]:</div>
+                    <div class="output-cell contact-output">
+                        <p><span class="label">Email:</span> <a href="mailto:akshatsahay19@gmail.com">akshatsahay19@gmail.com</a></p>
+                        <p><span class="label">GitHub:</span> <a href="https://github.com/{{ github_username }}" target="_blank" rel="noreferrer">github.com/{{ github_username }}</a></p>
+                        <p><span class="label">LinkedIn:</span> <a href="https://www.linkedin.com/in/akshatsahay72/" target="_blank" rel="noreferrer">linkedin.com/in/akshatsahay72/</a></p>
+
+                        <form id="contact-form" class="contact-form">
+                            <div class="form-row">
+                                <label for="contact-name">Name</label>
+                                <input id="contact-name" name="name" type="text" required />
+                            </div>
+                            <div class="form-row">
+                                <label for="contact-email">Email</label>
+                                <input id="contact-email" name="email" type="email" required />
+                            </div>
+                            <div class="form-row">
+                                <label for="contact-message">Message</label>
+                                <textarea id="contact-message" name="message" rows="4" required></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit">Send</button>
+                                <span id="contact-status" class="contact-status" aria-live="polite"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Command Input -->
+            <section class="cell-section command-section">
+                <div class="cell-row">
+                    <div class="prompt">&gt;</div>
+                    <div class="command-input-wrapper">
+                        <input
+                            id="command-input"
+                            type="text"
+                            autocomplete="off"
+                            spellcheck="false"
+                            placeholder="Type a command (home, projects, certificates, git, contact) and press Enter..."
+                        />
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        window.NOTEBOOK_CONFIG = {
+            githubUsername: "{{ github_username }}"
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
+
