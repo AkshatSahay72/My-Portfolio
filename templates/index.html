@@ -61,9 +61,10 @@
                         <div class="home-layout">
                             <div class="home-left">
                                 <img
-                                    src="{{ url_for('static', filename=profile_image) }}"
+                                    src="{{ url_for('static', filename='images/Profile_Picture.jpeg') }}"
                                     alt="Profile Picture of Akshat Sahay"
                                     class="profile-picture"
+                                    onerror="this.classList.add('hidden')"
                                 />
                             </div>
                             <div class="home-right">
