@@ -19,23 +19,36 @@ def _github_headers() -> Dict[str, str]:
 
 
 def get_projects(username: str) -> List[Dict[str, Any]]:
-    """
-    Fetch non-fork repositories for the given user from GitHub.
-    """
     url = f"{GITHUB_API_BASE}/users/{username}/repos"
+
     params = {
         "per_page": 100,
         "sort": "pushed",
         "direction": "desc",
     }
-    resp = requests.get(url, headers=_github_headers(), params=params, timeout=10)
-    resp.raise_for_status()
-    data = resp.json()
+
+    headers = _github_headers()
+    headers["User-Agent"] = "portfolio-app"
+
+    try:
+        resp = requests.get(url, headers=headers, params=params, timeout=10)
+
+        if resp.status_code != 200:
+            print("GitHub API error:", resp.status_code, resp.text)
+            return []
+
+        data = resp.json()
+
+    except Exception as e:
+        print("GitHub API request failed:", e)
+        return []
 
     repos: List[Dict[str, Any]] = []
+
     for repo in data:
         if repo.get("fork"):
             continue
+
         repos.append(
             {
                 "name": repo.get("name"),
@@ -50,27 +63,27 @@ def get_projects(username: str) -> List[Dict[str, Any]]:
             }
         )
 
-    # Sort by last updated (pushed_at) descending
     repos.sort(key=lambda r: r.get("pushed_at") or "", reverse=True)
+
     return repos
 
 
 def get_github_stats(username: str) -> Dict[str, Any]:
-    """
-    Aggregate repository statistics and user profile information.
-    """
     repos = get_projects(username)
+
     repo_count = len(repos)
     total_stars = sum(r.get("stargazers_count", 0) for r in repos)
 
     languages = [r.get("language") for r in repos if r.get("language")]
     top_language = None
+
     if languages:
         counts = Counter(languages)
         top_language = counts.most_common(1)[0][0]
 
     last_commit = None
     dates = []
+
     for r in repos:
         pushed = r.get("pushed_at")
         if pushed:
@@ -78,17 +91,31 @@ def get_github_stats(username: str) -> Dict[str, Any]:
                 dt = datetime.fromisoformat(pushed.replace("Z", "+00:00"))
                 dates.append(dt)
             except Exception:
-                continue
+                pass
+
     if dates:
         last_commit = max(dates).isoformat()
 
-    # Fetch user profile information
     user_url = f"{GITHUB_API_BASE}/users/{username}"
-    user_resp = requests.get(user_url, headers=_github_headers(), timeout=10)
-    user_resp.raise_for_status()
-    user = user_resp.json()
 
-    stats: Dict[str, Any] = {
+    try:
+        user_resp = requests.get(
+            user_url,
+            headers=_github_headers(),
+            timeout=10
+        )
+
+        if user_resp.status_code != 200:
+            print("GitHub user API error:", user_resp.status_code)
+            user = {}
+        else:
+            user = user_resp.json()
+
+    except Exception as e:
+        print("GitHub user request failed:", e)
+        user = {}
+
+    stats = {
         "repositories": repo_count,
         "stars": total_stars,
         "top_language": top_language or "N/A",
@@ -100,4 +127,3 @@ def get_github_stats(username: str) -> Dict[str, Any]:
     }
 
     return stats
-
