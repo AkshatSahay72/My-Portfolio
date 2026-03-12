@@ -22,7 +22,7 @@ def get_certificates():
             certificates.append(
                 {
                     "name": file.rsplit(".", 1)[0].replace("_", " "),
-                    "path": f"/static/certificates/{file}",
+                    "path": f"/certificates/{file}",
                 }
             )
 
