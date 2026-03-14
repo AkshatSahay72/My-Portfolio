@@ -122,21 +122,29 @@ async function loadProjects() {
       const links = document.createElement("div");
       links.className = "project-links";
 
-      if (repo.html_url) {
+      const ghUrl = repo.html_url || repo.github_url;
+      if (ghUrl) {
         const ghLink = document.createElement("a");
-        ghLink.href = repo.html_url;
+        ghLink.href = ghUrl;
         ghLink.target = "_blank";
         ghLink.rel = "noreferrer";
         ghLink.textContent = "GitHub";
+        ghLink.className = "btn";
+        ghLink.style.padding = "6px 14px";
+        ghLink.style.fontSize = "0.85rem";
         links.appendChild(ghLink);
       }
 
-      if (repo.homepage) {
+      const liveUrl = repo.live_url || repo.homepage;
+      if (liveUrl) {
         const liveLink = document.createElement("a");
-        liveLink.href = repo.homepage;
+        liveLink.href = liveUrl;
         liveLink.target = "_blank";
         liveLink.rel = "noreferrer";
-        liveLink.textContent = "Live Demo";
+        liveLink.innerHTML = "Live Demo ↗";
+        liveLink.className = "btn";
+        liveLink.style.padding = "6px 14px";
+        liveLink.style.fontSize = "0.85rem";
         links.appendChild(liveLink);
       }
 
@@ -238,7 +246,7 @@ function setupContactForm() {
     statusEl.textContent = "sending...";
 
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch("/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -252,7 +260,7 @@ function setupContactForm() {
         statusEl.classList.remove("success");
         statusEl.classList.add("error");
       } else {
-        statusEl.textContent = "message sent successfully";
+        statusEl.innerHTML = "Message sent successfully 🚀<br>I will get back to you soon.";
         statusEl.classList.remove("error");
         statusEl.classList.add("success");
         form.reset();

@@ -80,13 +80,13 @@ def api_git_stats():
     return jsonify(stats)
 
 
-@app.route("/api/contact", methods=["POST"])
-def api_contact():
-    """
-    Receive contact form submissions and (optionally) forward them via email.
-    """
-    from smtplib import SMTP, SMTPException
+import requests
 
+@app.route("/contact", methods=["POST"])
+def contact():
+    """
+    Receive contact form submissions and forward them via Resend API.
+    """
     data = request.get_json(silent=True) or {}
     name = (data.get("name") or "").strip()
     email = (data.get("email") or "").strip()
@@ -95,33 +95,37 @@ def api_contact():
     if not name or not email or not message:
         return jsonify({"ok": False, "error": "Missing required fields"}), 400
 
-    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    smtp_user = os.getenv("SMTP_USER")
-    smtp_password = os.getenv("SMTP_PASSWORD")
-    recipient = os.getenv("CONTACT_EMAIL", "akshatsahay19@gmail.com")
+    RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 
-    if not smtp_user or not smtp_password:
-        # Email is optional; fail gracefully if not configured.
-        return jsonify({"ok": False, "error": "Email service not configured on server."}), 500
+    if not RESEND_API_KEY:
+        return jsonify({"ok": False, "error": "Email service not configured on server (Missing Resend API Key)."}), 500
 
-    subject = f"[Portfolio Contact] Message from {name}"
-    body = (
-        f"Name: {name}\n"
-        f"Email: {email}\n\n"
-        f"Message:\n{message}\n"
-    )
-    msg = f"From: {smtp_user}\r\nTo: {recipient}\r\nSubject: {subject}\r\n\r\n{body}"
+    url = "https://api.resend.com/emails"
+
+    headers = {
+        "Authorization": f"Bearer {RESEND_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "from": "Portfolio <onboarding@resend.dev>",
+        "to": ["akshatsahay19@gmail.com"],
+        "subject": f"Portfolio Contact from {name}",
+        "html": f"""
+        <h3>New Contact Message</h3>
+        <p><b>Name:</b> {name}</p>
+        <p><b>Email:</b> {email}</p>
+        <p><b>Message:</b><br>{message}</p>
+        """
+    }
 
     try:
-        with SMTP(smtp_server, smtp_port, timeout=20) as smtp:
-            smtp.starttls()
-            smtp.login(smtp_user, smtp_password)
-            smtp.sendmail(smtp_user, [recipient], msg.encode("utf-8"))
-    except SMTPException as exc:
+        res = requests.post(url, headers=headers, json=payload)
+        res.raise_for_status()
+    except Exception as exc:
         return jsonify({"ok": False, "error": str(exc)}), 500
 
-    return jsonify({"ok": True})
+    return jsonify({"ok": True, "status": "success"})
 
 
 if __name__ == "__main__":
