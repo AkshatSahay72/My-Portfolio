@@ -310,6 +310,8 @@ function setupCommandInput() {
         certificates: "certificates",
         certs: "certificates",
         git: "git",
+        github: "github-activity",
+        activity: "github-activity",
         contact: "contact",
         about: "home",
       };
@@ -329,5 +331,92 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCommandInput();
   setupContactForm();
   typeBootLines();
+  setupAIChatbot();
 });
+
+function setupAIChatbot() {
+  const toggleBtn = document.getElementById("ai-chat-toggle");
+  const closeBtn = document.getElementById("ai-chat-close");
+  const panel = document.getElementById("ai-chat-panel");
+  const messagesContainer = document.getElementById("ai-chat-messages");
+  const inputField = document.getElementById("ai-chat-input");
+  const sendBtn = document.getElementById("ai-chat-send");
+  let hasOpened = false;
+
+  if (!toggleBtn || !panel || !messagesContainer || !inputField || !sendBtn) return;
+
+  function toggleChat() {
+    panel.classList.toggle("hidden");
+    if (!panel.classList.contains("hidden")) {
+      inputField.focus();
+      if (!hasOpened) {
+        hasOpened = true;
+        appendMessage("bot", "Hi! I'm Akshat's AI assistant. Ask me about his projects, skills, or GitHub work.");
+      }
+    }
+  }
+
+  toggleBtn.addEventListener("click", toggleChat);
+  closeBtn.addEventListener("click", toggleChat);
+
+  function appendMessage(sender, text) {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = `ai-msg ${sender}`;
+    msgDiv.textContent = text;
+    messagesContainer.appendChild(msgDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  function showTypingIndicator() {
+    const typingDiv = document.createElement("div");
+    typingDiv.className = "ai-msg bot ai-typing";
+    typingDiv.id = "ai-typing-indicator";
+    typingDiv.innerHTML = '<div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>';
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    return typingDiv;
+  }
+
+  function removeTypingIndicator() {
+    const indicator = document.getElementById("ai-typing-indicator");
+    if (indicator) indicator.remove();
+  }
+
+  async function sendMessage() {
+    const text = inputField.value.trim();
+    if (!text) return;
+
+    inputField.value = "";
+    appendMessage("user", text);
+
+    const typingIndicator = showTypingIndicator();
+
+    try {
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      
+      removeTypingIndicator();
+
+      if (!res.ok || !data.ok) {
+        appendMessage("error", data.error || "Sorry, I couldn't reach the server.");
+      } else {
+        appendMessage("bot", data.reply);
+      }
+    } catch (err) {
+      console.error(err);
+      removeTypingIndicator();
+      appendMessage("error", "Network error. Please try again later.");
+    }
+  }
+
+  sendBtn.addEventListener("click", sendMessage);
+  inputField.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+}
 

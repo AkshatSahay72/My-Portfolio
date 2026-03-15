@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, jsonify, render_template, request
+from groq import Groq
 
 from utils.github_api import get_github_stats, get_projects
 
@@ -10,23 +11,35 @@ app = Flask(__name__)
 
 def get_certificates():
     """
-    Scan the local static/certificates folder for certificate files.
-
-    Includes all files regardless of extension.
+    Fetch certificates directly from the Google Drive API using a folder ID.
+    Returns a list of dicts with 'name' and 'link' keys.
     """
-    folder = os.path.join(app.static_folder, "certificates")
+    api_key = os.getenv("GOOGLE_API_KEY")
+    folder_id = "1VKo61wTGJfuQVPaBbfe-SqAXqJPH4Io-"
     certificates = []
 
-    if os.path.exists(folder):
-        for file in os.listdir(folder):
-            certificates.append(
-                {
-                    "name": file.rsplit(".", 1)[0].replace("_", " "),
-                    "path": f"/certificates/{file}",
-                }
-            )
+    if api_key:
+        url = f"https://www.googleapis.com/drive/v3/files?q='{folder_id}'+in+parents+and+trashed=false&key={api_key}&fields=files(id,name)"
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+            
+            for file in data.get("files", []):
+                file_name = file.get("name", "").rsplit(".", 1)[0].replace("_", " ")
+                file_id = file.get("id")
+                certificates.append(
+                    {
+                        "name": file_name,
+                        "link": f"https://drive.google.com/file/d/{file_id}/view",
+                    }
+                )
+        except Exception as e:
+            print(f"Error fetching certificates from Google Drive: {e}")
+    else:
+        print("GOOGLE_API_KEY environment variable not set. Cannot fetch certificates.")
 
-    print("Loaded certificates:", certificates)
+    print("Loaded certificates from Google Drive:", certificates)
     return certificates
 
 
@@ -65,6 +78,7 @@ def home():
         "index.html",
         certificates=certificates,
         profile_image=profile_image,
+        github_username="AkshatSahay72"
     )
 
 
@@ -126,6 +140,53 @@ def contact():
         return jsonify({"ok": False, "error": str(exc)}), 500
 
     return jsonify({"ok": True, "status": "success"})
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    """
+    Receive chat messages and return Groq AI responses.
+    """
+    data = request.get_json(silent=True) or {}
+    user_message = (data.get("message") or "").strip()
+
+    if not user_message:
+        return jsonify({"ok": False, "error": "Missing message content"}), 400
+
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+    if not GROQ_API_KEY:
+        return jsonify({"ok": False, "error": "AI service not configured on server (Missing Groq API Key)."}), 500
+
+    try:
+        client = Groq(api_key=GROQ_API_KEY)
+        
+        system_prompt = (
+            "You are an AI assistant for Akshat Sahay's portfolio website. "
+            "Help visitors learn about his machine learning projects, programming skills, GitHub work, and experience. "
+            "Answer clearly and professionally."
+        )
+
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": system_prompt
+                },
+                {
+                    "role": "user",
+                    "content": user_message
+                }
+            ],
+            model="llama-3.1-8b-instant",
+        )
+
+        reply = chat_completion.choices[0].message.content
+        return jsonify({"ok": True, "reply": reply})
+
+    except Exception as exc:
+        print(f"Error communicating with Groq API: {exc}")
+        return jsonify({"ok": False, "error": "Failed to generate AI response. Please try again later."}), 500
 
 
 if __name__ == "__main__":
