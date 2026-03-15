@@ -190,13 +190,5 @@ def chat():
 
 
 if __name__ == "__main__":
-    # Prefer a "safe" non-privileged port by default (8000 instead of 5000),
-    # but allow overriding via the PORT environment variable.
     port = int(os.getenv("PORT", "8000"))
-    try:
-        # Disable the auto-reloader to avoid noisy restart loops on Windows.
-        app.run(debug=True, use_reloader=False, port=port)
-    except OSError as exc:
-        # Common cause: port already in use or blocked by local policy.
-        print(f"[Server] Failed to start on port {port}: {exc}")
-
+    app.run(debug=True, use_reloader=False, port=port)
